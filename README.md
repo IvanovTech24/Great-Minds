@@ -14,13 +14,15 @@ This adds an engaging and humanizing layer to the historical data, making histor
 
 ## Contents
 
-- Setup Tutorials
-- Project Setup
-- Key Parts
+**Setup Tutorials**
+- [Project Setup](docs/project_setup.md)
+
+**Key Parts**
   - Models
   - Views & Forms
   - Templates & UI
-- Key Components
+
+**Key Components**
   - Data Architecture & Relationships
   - Custom Template Tags
   - Form Validation & User Experience
