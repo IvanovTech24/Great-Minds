@@ -114,3 +114,60 @@ class Person(models.Model):
         ordering = ['last_name', 'first_name']
         verbose_name = 'Person'
         verbose_name_plural = 'People'
+
+
+class Quote(models.Model):
+    text = models.TextField(
+        verbose_name='Quote Text',
+    )
+
+    person = models.ForeignKey(
+        to=Person,
+        on_delete=models.CASCADE,
+        related_name='quotes',
+        verbose_name='Person',
+    )
+
+    source = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Source (e.g. Book, Speech)'
+    )
+
+    def __str__(self) -> str:
+        if len(self.text) > 50:
+            return f'"{self.text[:50]}..."'
+        return f'"{self.text}"'
+
+    class Meta:
+        verbose_name = 'Quote'
+        verbose_name_plural = 'Quotes'
+
+
+class Influence(models.Model):
+    influencer = models.ForeignKey(
+        to=Person,
+        on_delete=models.CASCADE,
+        related_name='influenced',
+        verbose_name='Influencer (The one who inspires)',
+    )
+
+    influenced = models.ForeignKey(
+        to=Person,
+        on_delete=models.CASCADE,
+        related_name='influenced_by',
+        verbose_name='Influenced (The one who was inspired)',
+    )
+
+    description = models.TextField(
+        blank=True,
+        verbose_name='Description of influence',
+    )
+
+    def __str__(self) -> str:
+        return f"{self.influencer} -> {self.influenced}"
+
+    class Meta:
+        unique_together = ('influencer', 'influenced')
+        verbose_name = 'Influence'
+        verbose_name_plural = 'Influences'
