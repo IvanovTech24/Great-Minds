@@ -86,3 +86,4 @@ While the core functionality focuses on the Django Basics requirements, the plat
 - **Historical News Feed:** A dynamic section for recent discoveries or historical anniversaries.
 - **Community Engagement:** A voting system for "Person of the Month".
 - **Events & Performances Integration:** A dedicated section linking historical figures to real-world, upcoming events. For example, users could see upcoming concerts featuring the works of Bach or Mozart in their city, bridging the gap between historical legacy and modern cultural life.
+- **Personal Media Galleries:** Extending the Person model to support a gallery of multiple images for each historical figure, allowing users to explore their life and works visually.
