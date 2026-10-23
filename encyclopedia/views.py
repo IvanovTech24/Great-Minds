@@ -1,6 +1,7 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from encyclopedia.models import Person
+from django.urls import reverse_lazy
+from encyclopedia.mixins import BasePersonView
 
 class PersonListView(ListView):
     model = Person
@@ -14,3 +15,16 @@ class PersonDetailView(DetailView):
     context_object_name = 'person'
     slug_url_kwarg = 'slug'
 
+
+class PersonCreateView(BasePersonView ,CreateView):
+    ...
+
+
+class PersonUpdateView(BasePersonView ,UpdateView):
+    ...
+
+
+class PersonDeleteView(DeleteView):
+    model = Person
+    template_name = 'encyclopedia/person-delete.html'
+    success_url = reverse_lazy('encyclopedia:people')
