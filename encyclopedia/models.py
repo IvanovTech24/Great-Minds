@@ -22,8 +22,8 @@ class Era(models.Model):
     color_hex = models.CharField(
         max_length=7,
         default='#6c757d',
-        verbose_name='Color (Hex Code)',
-        help_text='Enter a hex color code (e.g., #FF5733)'
+        verbose_name='Era Color',
+        help_text='Pick a color that represents this era.'
     )
 
     def __str__(self) -> str:

@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from encyclopedia.models import Person
+from encyclopedia.models import Person, Era, Quote, Influence
 
 
 class PersonForm(forms.ModelForm):
@@ -78,3 +78,104 @@ class PersonForm(forms.ModelForm):
                 raise ValidationError('Death year cannot be earlier than birth year.')
 
         return death_year
+
+
+class EraForm(forms.ModelForm):
+    class Meta:
+        model = Era
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'placeholder': 'e.g. Renaissance'
+                }
+            ),
+            'start_year': forms.NumberInput(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'placeholder': 'e.g. 1400'
+                }
+            ),
+            'end_year': forms.NumberInput(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'placeholder': 'e.g. 1600'
+                }
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'rows': 4,
+                    'placeholder': 'Description of the era...'
+                }
+            ),
+            'color_hex': forms.TextInput(
+                attrs={
+                    'class': 'h-10 w-10 p-1 bg-gray-700 border border-gray-600 rounded cursor-pointer focus:outline-none focus:border-amber-500',
+                    'type': 'color',
+                }
+            ),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_year = cleaned_data.get('start_year')
+        end_year = cleaned_data.get('end_year')
+
+        if start_year and end_year and start_year> end_year:
+            self.add_error('end_year', 'End year cannot be earlier than start year.')
+
+        return cleaned_data
+
+
+class QuoteForm(forms.ModelForm):
+    class Meta:
+        model = Quote
+        fields = '__all__'
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'rows': 3,
+                    'placeholder': 'Enter the quote...'
+                }
+            ),
+            'person': forms.Select(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500'
+                }
+            ),
+            'source': forms.TextInput(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'placeholder': 'e.g. Book, Speech',
+                }
+            ),
+        }
+
+
+class InfluenceForm(forms.ModelForm):
+    class Meta:
+        model = Influence
+        fields = '__all__'
+        widgets = {
+            'influencer': forms.Select(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500'
+                }
+            ),
+            'influenced': forms.Select(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500'
+                }
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'class': 'w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500',
+                    'rows': 3,
+                    'placeholder': 'How did they influence each other?',
+                }
+            ),
+        }

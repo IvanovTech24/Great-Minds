@@ -3,9 +3,14 @@
 {% block title %}People - Great Minds{% endblock %}
 
 {% block content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-amber-500">Historical Figures</h1>
-    <p class="text-gray-400 mt-2">Discover the greatest minds in history.</p>
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-amber-500">Historical Figures</h1>
+        <p class="text-gray-400 mt-2">Discover the greatest minds in history.</p>
+    </div>
+    <a href="{% url 'encyclopedia:create' %}" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded transition shadow-lg">
+        + Add Person
+    </a>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
