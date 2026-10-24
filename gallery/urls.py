@@ -12,5 +12,13 @@ urlpatterns = [
             path('edit/', views.WorkUpdateView.as_view(), name='edit'),
             path('delete/', views.WorkDeleteView.as_view(), name='delete'),
         ]))
-    ]))
+    ])),
+    path('categories/', include([
+        path('', views.CategoryListView.as_view(), name='categories'),
+        path('create/', views.CategoryCreateView.as_view(), name='category_create'),
+        path('<int:pk>/', include([
+            path('edit/', views.CategoryUpdateView.as_view(), name='category_edit'),
+            path('delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
+        ]))
+    ])),
 ]

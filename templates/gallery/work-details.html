@@ -1,0 +1,53 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}{{ work.title }} - Great Minds{% endblock %}
+
+{% block content %}
+<div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-700">
+    <div class="md:flex">
+        <div class="md:w-1/2 bg-gray-900 p-6 flex justify-center items-center">
+            {% if work.image %}
+                <img src="{{ work.image.url }}" alt="{{ work.title }}" class="w-full h-auto rounded-lg shadow-md object-contain max-h-[600px]">
+            {% else %}
+                <div class="w-full h-64 bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
+                    No Image Available
+                </div>
+            {% endif %}
+        </div>
+        <div class="md:w-1/2 p-8">
+            <div class="flex justify-between items-start mb-4">
+                <h1 class="text-4xl font-bold text-amber-500">{{ work.title }}</h1>
+                <div class="flex space-x-2">
+                    <a href="{% url 'gallery:edit' work.slug %}" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded transition shadow-md">Edit</a>
+                    <a href="{% url 'gallery:delete' work.slug %}" class="bg-red-600 hover:bg-red-500 text-white text-sm font-semibold py-2 px-4 rounded transition shadow-md">Delete</a>
+                </div>
+            </div>
+
+            <p class="text-gray-400 text-sm mb-6">
+                By <a href="{% url 'encyclopedia:detail' work.person.slug %}" class="text-amber-500 hover:underline">{{ work.person.first_name }} {{ work.person.last_name }}</a> |
+                {{ work.year_created|default:"Unknown Year" }}
+            </p>
+
+            <div class="mb-6">
+                <h3 class="text-md font-semibold text-white mb-2">Categories:</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for cat in work.categories.all %}
+                        <span class="bg-gray-700 text-amber-400 text-xs px-2 py-1 rounded">{{ cat.name }}</span>
+                    {% empty %}
+                        <span class="text-gray-500 text-sm">No categories assigned.</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold text-white mb-2">Description</h3>
+            <p class="text-gray-300 leading-relaxed">{{ work.description }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="mt-8">
+    <a href="{% url 'gallery:works' %}" class="text-amber-500 hover:text-amber-400 font-semibold flex items-center">
+        &larr; Back to all works
+    </a>
+</div>
+{% endblock %}

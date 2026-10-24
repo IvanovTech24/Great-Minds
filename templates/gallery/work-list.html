@@ -1,0 +1,49 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}Works - Great Minds{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-amber-500">Masterpieces & Works</h1>
+        <p class="text-gray-400 mt-2">Explore the greatest creations in history.</p>
+    </div>
+    <a href="{% url 'gallery:create' %}" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded transition shadow-lg">
+        + Add Work
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for work in works %}
+        <a href="{% url 'gallery:detail' work.slug %}" class="block group h-full">
+            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-amber-500 transition h-full flex flex-col">
+                <div class="h-64 overflow-hidden">
+                    {% if work.image %}
+                        <img src="{{ work.image.url }}" alt="{{ work.title }}" class="w-full h-full object-cover object-top transition duration-300 group-hover:scale-105">
+                    {% else %}
+                        <div class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-500">
+                            No Image Available
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-500 transition">{{ work.title }}</h2>
+                    <p class="text-sm text-gray-400 mb-4 flex-grow">By {{ work.person.first_name }} {{ work.person.last_name }}</p>
+                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-700">
+                        <span class="text-xs text-amber-500 font-semibold">
+                            {% for cat in work.categories.all %}
+                                {{ cat.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="text-xs text-gray-500">{{ work.year_created|default:"Unknown" }}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 bg-gray-800 rounded-lg border border-gray-700">
+            <p class="text-gray-400 text-lg">No works have been added yet.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
