@@ -1,0 +1,76 @@
+{% extends 'shared/base.html' %}
+{% load custom_filters %}
+
+{% block title %}People - Great Minds{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-amber-500">Historical Figures</h1>
+        <p class="text-gray-400 mt-2">Discover the greatest minds in history.</p>
+    </div>
+    <a href="{% url 'encyclopedia:create' %}" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded transition shadow-lg">
+        + Add Person
+    </a>
+</div>
+
+<form method="get" class="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-800 p-4 rounded-lg border border-gray-700">
+    <div class="flex-grow w-full md:w-auto">
+        <input type="text" name="search" placeholder="Search by name..." value="{{ request.GET.search|default:'' }}"
+               class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500">
+    </div>
+    <div class="w-full md:w-auto">
+        <select name="era" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500">
+            <option value="">All eras</option>
+            {% for era in eras %}
+                <option value="{{ era.name }}" {% if request.GET.era == era.name %}selected{% endif %}>{{ era.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-6 rounded transition shadow-lg w-full md:w-auto">
+        Search
+    </button>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for person in people %}
+        <a href="{% url 'encyclopedia:detail' person.slug %}" class="block group h-full">
+            {% person_card person %}
+        </a>
+    {% empty %}
+        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 bg-gray-800 rounded-lg border border-gray-700">
+            <p class="text-gray-400 text-lg">No people have been added yet. Please add some in the Admin panel.</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+    <div class="mt-8 flex justify-center space-x-2">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.era %}&era={{ request.GET.era }}{% endif %}"
+               class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                First
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.era %}&era={{ request.GET.era }}{% endif %}"
+               class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Previous
+            </a>
+        {% endif %}
+
+        <span class="bg-amber-600 text-white px-4 py-2 rounded">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.era %}&era={{ request.GET.era }}{% endif %}"
+               class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Next
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.era %}&era={{ request.GET.era }}{% endif %}"
+               class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Last
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
