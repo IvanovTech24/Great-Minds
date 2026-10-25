@@ -1,0 +1,23 @@
+{% load custom_filters %}
+
+<div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-amber-500 transition h-full flex flex-col">
+    <div class="h-64 overflow-hidden">
+        {% if person.portrait %}
+            <img src="{{ person.portrait.url }}" alt="{{ person.first_name }} {{ person.last_name }}" class="w-full h-full object-cover object-top transition duration-300 group-hover:scale-105">
+        {% else %}
+            <div class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-500">
+                No Image Available
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="p-6 flex flex-col flex-grow">
+        <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-500 transition">{{ person.first_name }} {{ person.last_name }}</h2>
+        <p class="text-sm text-gray-400 mb-4 flex-grow">{{ person.short_bio|truncatechars:100 }}</p>
+
+        <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-700">
+            <span class="text-xs text-amber-500 font-semibold">{{ person.era.name }}</span>
+            <span class="text-xs text-gray-500">{{ person|get_lifespan }}</span>
+        </div>
+    </div>
+</div>

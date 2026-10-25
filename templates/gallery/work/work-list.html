@@ -13,6 +13,34 @@
     </a>
 </div>
 
+<form method="get" class="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-800 p-4 rounded-lg border border-gray-700">
+    <div class="flex-grow w-full md:w-auto">
+        <input type="text" name="search" placeholder="Search by title..." value="{{ request.GET.search|default:'' }}"
+               class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500">
+    </div>
+    <div class="w-full md:w-auto">
+        <select name="category" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="w-full md:w-auto">
+        <select name="masterpiece" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-amber-500">
+            <option value="">All Works</option>
+            <option value="yes" {% if request.GET.masterpiece == 'yes' %}selected{% endif %}>
+                Only Masterpieces
+            </option>
+        </select>
+    </div>
+    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-6 rounded transition shadow-lg w-full md:w-auto">
+        Filter
+    </button>
+</form>
+
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for work in works %}
         <a href="{% url 'gallery:detail' work.slug %}" class="block group h-full">
@@ -46,4 +74,25 @@
         </div>
     {% endfor %}
 </div>
+
+
+{% if is_paginated %}
+<div class="mt-8 flex justify-center space-x-2">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.masterpiece %}&masterpiece={{ request.GET.masterpiece }}{% endif %}"
+           class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.masterpiece %}&masterpiece={{ request.GET.masterpiece }}{% endif %}"
+           class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Previous</a>
+    {% endif %}
+
+    <span class="bg-amber-600 text-white px-4 py-2 rounded">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.masterpiece %}&masterpiece={{ request.GET.masterpiece }}{% endif %}"
+           class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.masterpiece %}&masterpiece={{ request.GET.masterpiece }}{% endif %}"
+           class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Last</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}

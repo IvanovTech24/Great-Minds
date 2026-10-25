@@ -4,9 +4,25 @@ from encyclopedia.models import Person, Era, Quote, Influence
 
 
 class PersonForm(forms.ModelForm):
+    full_name = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'w-full p-2 bg-gray-600 border border-gra-500 rounded text-gray-400 cursor-not-allowed',
+                'readonly': 'readonly',
+            }
+        ),
+        label='Full Name (Auto-generated)'
+    )
+
     class Meta:
         model = Person
-        exclude = ['slug']
+        fields = [
+            'first_name', 'last_name', 'full_name',
+            'birth_year', 'death_year', 'nationality',
+            'short_bio', 'biography', 'fun_fact',
+            'portrait', 'era'
+        ]
 
         widgets = {
             'first_name': forms.TextInput(
@@ -68,6 +84,12 @@ class PersonForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['full_name'].initial = f"{self.instance.first_name} {self.instance.last_name}"
+
 
     def clean_death_year(self):
         death_year = self.cleaned_data.get('death_year')
