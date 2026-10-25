@@ -12,6 +12,80 @@ Beyond standard biographies, the platform introduces an interactive "Fun Facts" 
 lesser-known, and sometimes humorous real-life events from the lives of these great minds. 
 This adds an engaging and humanizing layer to the historical data, making history accessible and entertaining.
 
+## Project Structure
+
+The project follows a modular structure, separating concerns into distinct Django apps:
+
+```text
+Great_Minds/
+│
+├── core/                  # Main app
+│   ├── templates/
+│   └── views.py
+│
+├── encyclopedia/          # App for historical figures, eras, quotes, influences
+│   ├── management/        
+│   ├── migrations/
+│   ├── templatetags/      # Custom template filters and tags
+│   ├── tests.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── mixins.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+│
+├── gallery/               # App for artworks, inventions, and categories
+│   ├── migrations/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── mixins.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+│
+├── great_minds/           # Main project configuration
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── media/                 # User-uploaded files (not tracked by Git)
+├── static/                # Static files (CSS, images, favicon)
+│   ├── css/
+│   │   └── custom.css
+│   └── images/
+│       └── favicon.svg
+│
+├── templates/             # Global templates directory
+│   ├── core/
+│   │   └── home-page.html
+│   ├── encyclopedia/
+│   │   ├── era/
+│   │   ├── influence/
+│   │   ├── partials/
+│   │   ├── person/
+│   │   └── quote/
+│   ├── gallery/
+│   │   ├── category/
+│   │   └── work/
+│   └── shared/
+│       ├── base.html
+│       ├── footer.html
+│       ├── header.html
+│       └── navbar.html
+│
+├── .env                   # Environment variables (not tracked by Git)
+├── .env.example           # Example environment variables
+├── .gitignore
+├── manage.py
+├── README.md
+└── requirements.txt
+```
+
 ## Contents
 
 **Setup Tutorials**
@@ -52,6 +126,17 @@ To keep the logic out of the templates (following the "Fat Models, Thin Template
 
 - **Custom Validation**: Forms (like `PersonForm`) implement custom `clean_*` methods to ensure data integrity (e.g., a person cannot die before they are born, or birth years cannot be set in the future).
 - **UI/UX**: Forms and the overall layout are styled using **Tailwind CSS**. The design follows a mobile-first approach, utilizing utility classes for a clean, modern, and highly customizable interface. A confirmation step is mandatory before any deletion (via a dedicated `DeleteView` template), preventing accidental data loss.
+- **Read-only Fields:** To ensure data integrity, the `PersonForm` includes a read-only `full_name` field that automatically displays the concatenation of the first and last name, preventing manual editing.
+
+### Advanced Features
+
+To exceed the basic requirements and provide a richer user experience, the following advanced features were implemented:
+- **Search & Filtering:** Users can search for historical figures by name and filter them by their historical era directly from the main list view.
+- **Pagination:** The list of people is paginated (6 items per page) to ensure fast loading times and a clean UI, even with a large dataset.
+- **Query Optimization:** The `PersonListView` utilizes `select_related('era')` to prevent the N+1 query problem, ensuring database efficiency.
+- **Custom Inclusion Tags:** A reusable `{% person_card person %}` tag is used to render person cards, keeping templates DRY and modular.
+- **Custom 404 Page:** A branded, user-friendly 404 error page is displayed for non-existent URLs.
+- **Static Files Management:** The project utilizes Django's static files system to serve a custom CSS file (for stylin the scrollbar) and an SVG favicon, demonstrating proper configuration of `STATIC_URL` and `STATICFILES_DIRS`.
 
 ---
 
