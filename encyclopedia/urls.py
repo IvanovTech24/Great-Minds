@@ -23,9 +23,21 @@ urlpatterns = [
         ]))
     ])),
     path('quotes/', include([
+        path('', views.QuoteListView.as_view(), name='quotes'),
         path('create/', views.QuoteCreateView.as_view(), name='quote_create'),
+        path('<int:pk>/', include([
+            path('', views.QuoteDetailView.as_view(), name='quote_detail'),
+            path('edit/', views.QuoteUpdateView.as_view(), name='quote_edit'),
+            path('delete/', views.QuoteDeleteView.as_view(), name='quote_delete'),
+        ])),
     ])),
     path('influences/', include([
-        path('create/', views.InfluenceCreateView.as_view(), name='influence_create')
-    ]))
+        path('', views.InfluenceListView.as_view(), name='influences'),
+        path('create/', views.InfluenceCreateView.as_view(), name='influence_create'),
+        path('<int:pk>/', include([
+            path('', views.InfluenceDetailView.as_view(), name='influence_detail'),
+            path('edit/', views.InfluenceUpdateView.as_view(), name='influence_edit'),
+            path('delete/', views.InfluenceDeleteView.as_view(), name='influence_delete'),
+        ])),
+    ])),
 ]

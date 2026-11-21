@@ -87,8 +87,12 @@ class PersonForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.fields['full_name'].disabled = True
+
         if self.instance and self.instance.pk:
-            self.fields['full_name'].initial = f"{self.instance.first_name} {self.instance.last_name}"
+            self.fields['full_name'].initial = (
+                f"{self.instance.first_name} {self.instance.last_name}"
+            )
 
 
     def clean_death_year(self):
@@ -100,6 +104,14 @@ class PersonForm(forms.ModelForm):
                 raise ValidationError('Death year cannot be earlier than birth year.')
 
         return death_year
+
+    def clean_birth_year(self):
+        birth_year = self.cleaned_data.get('birth_year')
+        from django.utils import timezone
+        current_year = timezone.now().year
+        if birth_year and birth_year > current_year:
+            raise ValidationError("Birth year cannot be in the future.")
+        return birth_year
 
 
 class EraForm(forms.ModelForm):
@@ -155,7 +167,7 @@ class EraForm(forms.ModelForm):
 class QuoteForm(forms.ModelForm):
     class Meta:
         model = Quote
-        fields = '__all__'
+        fields = ['text', 'person', 'source']
         widgets = {
             'text': forms.Textarea(
                 attrs={
@@ -177,11 +189,18 @@ class QuoteForm(forms.ModelForm):
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['person'].queryset = Person.objects.all().order_by(
+            'last_name',
+            'first_name',
+        )
+
 
 class InfluenceForm(forms.ModelForm):
     class Meta:
         model = Influence
-        fields = '__all__'
+        fields = ['influencer', 'influenced', 'description']
         widgets = {
             'influencer': forms.Select(
                 attrs={
@@ -201,3 +220,21 @@ class InfluenceForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['influencer'].queryset = Person.objects.all().order_by('last_name', 'first_name')
+        self.fields['influenced'].queryset = Person.objects.all().order_by('last_name', 'first_name')
+
+
+    def clean(self):
+        cleaned_data = super().clean()
+        influencer = cleaned_data.get('influencer')
+        influenced = cleaned_data.get('influenced')
+
+        if influencer and influenced and influencer == influenced:
+            raise ValidationError(
+                "A person cannot influence themselves. "
+                "Please choose two different people"
+            )
+        return cleaned_data

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from core.models import SluggedModelMixin
 
 
 class Era(models.Model):
@@ -35,7 +36,9 @@ class Era(models.Model):
         verbose_name_plural = 'Eras'
 
 
-class Person(models.Model):
+class Person(SluggedModelMixin ,models.Model):
+    slug_source_field = None
+
     first_name = models.CharField(
         max_length=100,
         verbose_name='First Name',
@@ -100,14 +103,13 @@ class Person(models.Model):
         related_name='people'
     )
 
+    def _build_slug(self) -> str:
+        return slugify(f"{self.first_name}-{self.last_name}")
+
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def save(self, *args, **kwargs) -> None:
-        if not self.slug:
-            self.slug = slugify(f"{self.first_name}-{self.last_name}")
-        super().save(*args, **kwargs)
 
 
     class Meta:
@@ -168,6 +170,11 @@ class Influence(models.Model):
         return f"{self.influencer} -> {self.influenced}"
 
     class Meta:
-        unique_together = ('influencer', 'influenced')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['influencer', 'influenced'],
+                name='unique_influence_pair'
+            )
+        ]
         verbose_name = 'Influence'
         verbose_name_plural = 'Influences'

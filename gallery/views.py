@@ -71,3 +71,10 @@ class CategoryDeleteView(DeleteView):
     model = Category
     template_name = 'gallery/category/category-delete.html'
     success_url = reverse_lazy('gallery:categories')
+
+
+class CategoryDetailView(DetailView):
+    model = Category
+    template_name = 'gallery/category/category-detail.html'
+    context_object_name = 'category'
+    pk_url_kwarg = 'pk'

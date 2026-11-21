@@ -6,7 +6,7 @@ from gallery.models import Work, Category
 class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
-        exclude = ['slug']
+        exclude = ['slug', 'created_by']
 
         widgets = {
             'title': forms.TextInput(
@@ -57,6 +57,26 @@ class WorkForm(forms.ModelForm):
                 raise ValidationError("The creation year cannot be in the future.")
 
         return year_created
+
+    def clean(self):
+        cleaned_data = super().clean()
+        person = cleaned_data.get('person')
+        year_created = cleaned_data.get('year_created')
+
+        if person and year_created:
+            if person.birth_year and year_created < person.birth_year:
+                self.add_error(
+                    'year_created',
+                    f"This work cannot be created before its author was born "
+                    f"({person.birth_year})."
+                )
+            if person.death_year and year_created > person.death_year:
+                self.add_error(
+                    'year_created',
+                    f"This work cannot be created after its author's death "
+                    f"({person.death_year})."
+                )
+        return cleaned_data
 
 
 class CategoryForm(forms.ModelForm):

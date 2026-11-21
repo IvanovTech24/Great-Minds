@@ -2,11 +2,11 @@ from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
 from encyclopedia.models import Person, Era, Quote, Influence
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from encyclopedia.mixins import BasePersonView, BaseEraView
 from encyclopedia.forms import QuoteForm, InfluenceForm
+
 
 class PersonListView(ListView):
     model = Person
@@ -94,9 +94,81 @@ class QuoteCreateView(CreateView):
         return redirect('encyclopedia:detail', slug=self.object.person.slug)
 
 
+class QuoteListView(ListView):
+    model = Quote
+    template_name = 'encyclopedia/quote/quote-list.html'
+    context_object_name = 'quotes'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('person')
+
+
+class QuoteDetailView(DetailView):
+    model = Quote
+    template_name = 'encyclopedia/quote/quote-detail.html'
+    context_object_name = 'quote'
+
+
+class QuoteUpdateView(UpdateView):
+    model = Quote
+    form_class = QuoteForm
+    template_name = 'encyclopedia/quote/quote-form.html'
+
+    def get_success_url(self) -> str:
+        return reverse(
+            'encyclopedia:quote_detail',
+            kwargs={
+                'pk': self.object.pk
+            }
+        )
+
+
+class QuoteDeleteView(DeleteView):
+    model = Quote
+    template_name = 'encyclopedia/quote/quote-delete.html'
+    success_url = reverse_lazy('encyclopedia:quotes')
+
+
 
 class InfluenceCreateView(CreateView):
     model = Influence
     form_class = InfluenceForm
     template_name = 'encyclopedia/influence/influence-form.html'
     success_url = reverse_lazy('encyclopedia:people')
+
+
+class InfluenceListView(ListView):
+    model = Influence
+    template_name = 'encyclopedia/influence/influence-list.html'
+    context_object_name = 'influences'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('influencer', 'influenced')
+
+
+class InfluenceDetailView(DetailView):
+    model = Influence
+    template_name = 'encyclopedia/influence/influence-detail.html'
+    context_object_name = 'influence'
+
+
+class InfluenceUpdateView(UpdateView):
+    model = Influence
+    form_class = InfluenceForm
+    template_name = 'encyclopedia/influence/influence-form.html'
+
+    def get_success_url(self) -> str:
+        return reverse(
+            'encyclopedia:influence_detail',
+            kwargs={
+                'pk': self.object.pk
+            }
+        )
+
+
+class InfluenceDeleteView(DeleteView):
+    model = Influence
+    template_name = 'encyclopedia/influence/influence-delete.html'
+    success_url = reverse_lazy('encyclopedia:influences')

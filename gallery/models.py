@@ -1,9 +1,12 @@
 from django.db import models
 from django.utils.text import slugify
 from encyclopedia.models import Person
+from core.models import SluggedModelMixin
 
 
-class Category(models.Model):
+class Category(SluggedModelMixin ,models.Model):
+    slug_source_field = 'name'
+
     name = models.CharField(
         max_length=100,
         verbose_name='Category Name',
@@ -24,17 +27,15 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def save(self, *args, **kwargs) -> None:
-        if not self.slug:
-            self.slug = slugify(f"{self.name}")
-        super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = 'Category',
+        verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
 
-class Work(models.Model):
+class Work(SluggedModelMixin ,models.Model):
+    slug_source_field = 'title'
+
     title = models.CharField(
         max_length=200,
         verbose_name='Title',
@@ -86,10 +87,6 @@ class Work(models.Model):
     def __str__(self) -> str:
         return f"{self.title} by {self.person}"
 
-    def save(self, *args, **kwargs) -> None:
-        if not self.slug:
-            self.slug = slugify(f"{self.title}")
-        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-is_masterpiece', 'title']
