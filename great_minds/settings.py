@@ -41,6 +41,7 @@ PROJECT_APPS = [
     'core',
     'encyclopedia',
     'gallery',
+    'accounts',
 ]
 
 INSTALLED_APPS = [
@@ -129,6 +130,9 @@ USE_I18N = True
 USE_TZ = True
 
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
@@ -138,7 +142,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
