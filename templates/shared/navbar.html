@@ -1,32 +1,60 @@
 <nav class="bg-gray-800 border-b border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-            <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
                 <a href="{% url 'core:home' %}" class="text-2xl font-bold text-amber-500 hover:text-amber-400 transition">
                     Great Minds
                 </a>
             </div>
-            <div class="hidden md:block">
-                <div class="ml-10 flex items-baseline space-x-4">
-                    <a href="{% url 'encyclopedia:people' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        People
+            <div class="hidden md:flex items-baseline space-x-4">
+                <a href="{% url 'encyclopedia:people' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    People
+                </a>
+                <a href="{% url 'gallery:works' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Works
+                </a>
+                <a href="{% url 'encyclopedia:eras' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Eras
+                </a>
+                <a href="{% url 'gallery:categories' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Categories
+                </a>
+                <a href="{% url 'encyclopedia:quotes' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Quotes
+                </a>
+                <a href="{% url 'encyclopedia:influences' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Influences
+                </a>
+            </div>
+            <div class="flex items-center space-x-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}" class="flex items-center space-x-2 group px-3 py-2 text-sm font-medium text-gray-300 hover:text-amber-500 transition">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="User Avatar" class="w-8 h-8 rounded-full object-cover border-2 border-gray-600 group-hover:border-amber-500 transition">
+                        {% else %}
+                            <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold text-amber-500 border-2 border-gray-600 group-hover:border-amber-500 transition">
+                                {{ user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                        <span>
+                            {{ user.username }}
+                        </span>
                     </a>
-                    <a href="{% url 'gallery:works' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Works
+
+                    <form method="post" action="{% url 'accounts:logout' %}" class="inline m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-300 hover:text-amber-500 px-3 py-2 text-sm font-medium cursor-pointer">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="text-gray-300 hover:text-amber-500 px-3 py-2 text-sm font-medium">
+                        Login
                     </a>
-                    <a href="{% url 'encyclopedia:eras' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Eras
+                    <a href="{% url 'accounts:register' %}" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-md text-sm font-bold shadow-md transition">
+                        Register
                     </a>
-                    <a href="{% url 'gallery:categories' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Categories
-                    </a>
-                    <a href="{% url 'encyclopedia:quotes' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Quotes
-                    </a>
-                    <a href="{% url 'encyclopedia:influences' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Influences
-                    </a>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
